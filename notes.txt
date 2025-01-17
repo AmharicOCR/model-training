@@ -1,0 +1,4 @@
+=> pytesseract
+=> pytorch
+=> ResNet18
+=>

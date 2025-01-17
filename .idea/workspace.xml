@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac08072d-ca3e-4a9d-862c-82b0a536173d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/amharic ocr.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-    </list>
+    <list default="true" id="ac08072d-ca3e-4a9d-862c-82b0a536173d" name="Changes" comment="first version of the trained model with single epoch" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,8 +58,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737102001382</updated>
-      <workItem from="1737102011213" duration="2239000" />
+      <workItem from="1737102011213" duration="2577000" />
     </task>
+    <task id="LOCAL-00001" summary="first version of the trained model with single epoch">
+      <option name="closed" value="true" />
+      <created>1737104355002</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737104355002</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -75,6 +76,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="first version of the trained model with single epoch" />
+    <option name="LAST_COMMIT_MESSAGE" value="first version of the trained model with single epoch" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/amharic_ocr$train.coverage" NAME="train Coverage Results" MODIFIED="1737103969485" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

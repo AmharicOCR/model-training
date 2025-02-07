@@ -1,0 +1,1109 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "gpuType": "T4",
+      "authorship_tag": "ABX9TyPeRy/tclrsd098YRZ6UNo+",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/johnassefatheeth/am_OCR/blob/main/Untitled2.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1gmAGU4MFobZ",
+        "outputId": "cf3b85f1-9a39-4fef-94e6-8cab231ffb00"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ],
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import shutil\n",
+        "\n",
+        "# Define the dataset path in Google Drive\n",
+        "drive_path = '/content/drive/MyDrive/am_dataset.zip'\n",
+        "\n",
+        "# Copy it to Colab's working directory\n",
+        "shutil.copy(drive_path, '/content/')\n",
+        "print(\"Dataset copied successfully to Colab.\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "eIL5GHSGGE9l",
+        "outputId": "38493953-44ad-43e9-a01a-6512138dba04"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Dataset copied successfully to Colab.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import zipfile\n",
+        "import os\n",
+        "\n",
+        "zip_path = '/content/am_dataset.zip'\n",
+        "extract_path = '/content/amharic_dataset'\n",
+        "\n",
+        "# Extract the ZIP file\n",
+        "with zipfile.ZipFile(zip_path, 'r') as zip_ref:\n",
+        "    zip_ref.extractall(extract_path)\n",
+        "\n",
+        "print(f\"Dataset extracted to {extract_path}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "TerivG-FHZuI",
+        "outputId": "72f705d1-c46b-4a03-f842-78d2dedb87bb"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Dataset extracted to /content/amharic_dataset\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 1: Import necessary libraries\n",
+        "import torch\n",
+        "import torch.nn as nn\n",
+        "import torch.optim as optim\n",
+        "from torchvision import datasets, transforms\n",
+        "from torch.utils.data import DataLoader\n",
+        "from sklearn.metrics import accuracy_score, precision_score, recall_score\n",
+        "import numpy as np"
+      ],
+      "metadata": {
+        "id": "DBBlv6gWHjiI"
+      },
+      "execution_count": 18,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import shutil\n",
+        "import random\n",
+        "\n",
+        "def split_dataset(dataset_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1):\n",
+        "    assert train_ratio + val_ratio + test_ratio == 1, \"Ratios must sum to 1\"\n",
+        "\n",
+        "    # Create output directories\n",
+        "    train_dir = os.path.join(output_dir, 'train')\n",
+        "    val_dir = os.path.join(output_dir, 'val')\n",
+        "    test_dir = os.path.join(output_dir, 'test')\n",
+        "\n",
+        "    for split_dir in [train_dir, val_dir, test_dir]:\n",
+        "        os.makedirs(split_dir, exist_ok=True)\n",
+        "\n",
+        "    for char_folder in os.listdir(dataset_dir):\n",
+        "        char_folder_path = os.path.join(dataset_dir, char_folder)\n",
+        "        if not os.path.isdir(char_folder_path):\n",
+        "            continue\n",
+        "\n",
+        "        images = [f for f in os.listdir(char_folder_path) if f.endswith('.png')]\n",
+        "        random.shuffle(images)\n",
+        "\n",
+        "        num_train = int(len(images) * train_ratio)\n",
+        "        num_val = int(len(images) * val_ratio)\n",
+        "\n",
+        "        train_images = images[:num_train]\n",
+        "        val_images = images[num_train:num_train + num_val]\n",
+        "        test_images = images[num_train + num_val:]\n",
+        "\n",
+        "        # Create subfolders for each character within train, val, and test\n",
+        "        for split_dir, split_images in zip([train_dir, val_dir, test_dir], [train_images, val_images, test_images]):\n",
+        "            char_split_dir = os.path.join(split_dir, char_folder)  # Subfolder for the character in the split\n",
+        "            os.makedirs(char_split_dir, exist_ok=True) # Ensure the subfolder exists\n",
+        "            for img in split_images:\n",
+        "                shutil.copy(os.path.join(char_folder_path, img), os.path.join(char_split_dir, img)) # Copy to subfolder\n",
+        "\n",
+        "\n",
+        "        print(f\"Processed '{char_folder}': {len(train_images)} train, {len(val_images)} val, {len(test_images)} test\")\n",
+        "\n",
+        "    print(\"Dataset split completed successfully.\")\n",
+        "\n",
+        "# Run the function\n",
+        "dataset_dir = '/content/amharic_dataset/amharic_dataset'  # Path to extracted dataset\n",
+        "output_dir = '/content/amharic_dataset_split'  # Output split dataset\n",
+        "split_dataset(dataset_dir, output_dir)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "-3C2TqY1IEAF",
+        "outputId": "8eb7ff17-19c1-4fd9-8cfa-96dd69eafbed"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Processed 'ቷ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፋ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዳ': 2336 train, 292 val, 292 test\n",
+            "Processed '3': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኚ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኸ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኤ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኆ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሹ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሡ': 2336 train, 292 val, 292 test\n",
+            "Processed '4': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኢ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጶ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዴ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኬ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ካ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፎ': 2336 train, 292 val, 292 test\n",
+            "Processed '፹': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፆ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሣ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዲ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሺ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጯ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዥ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጻ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ከ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ና': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኹ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዐ': 2336 train, 292 val, 292 test\n",
+            "Processed '፨': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጹ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሶ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ድ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጷ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቴ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጇ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሊ': 2336 train, 292 val, 292 test\n",
+            "Processed '፸': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኡ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዷ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቺ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኛ': 2336 train, 292 val, 292 test\n",
+            "Processed '¡': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቬ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጮ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጉ': 2336 train, 292 val, 292 test\n",
+            "Processed '፴': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሜ': 2336 train, 292 val, 292 test\n",
+            "Processed '፲': 2336 train, 292 val, 292 test\n",
+            "Processed 'ክ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ህ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጫ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኘ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሀ': 2336 train, 292 val, 292 test\n",
+            "Processed '0': 2336 train, 292 val, 292 test\n",
+            "Processed '፥': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጱ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዊ': 2336 train, 292 val, 292 test\n",
+            "Processed 'በ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሖ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሪ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቲ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ረ': 2336 train, 292 val, 292 test\n",
+            "Processed '፤': 2336 train, 292 val, 292 test\n",
+            "Processed '፯': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቨ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዱ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፑ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሰ': 2336 train, 292 val, 292 test\n",
+            "Processed '፺': 2336 train, 292 val, 292 test\n",
+            "Processed 'ስ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጥ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ባ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኙ': 2336 train, 292 val, 292 test\n",
+            "Processed '።': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቶ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቡ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሌ': 2336 train, 292 val, 292 test\n",
+            "Processed '፱': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኟ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሑ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሦ': 2336 train, 292 val, 292 test\n",
+            "Processed '፳': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኼ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፗ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሴ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሞ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኪ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ደ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቁ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኜ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጣ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፕ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ች': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጆ': 2336 train, 292 val, 292 test\n",
+            "Processed '፻': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፉ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ም': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኩ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጰ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቫ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጳ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቀ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዖ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዢ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፒ': 2336 train, 292 val, 292 test\n",
+            "Processed 'GT': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሾ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዤ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፖ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዎ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቼ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሓ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ብ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጪ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፐ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቯ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዝ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኻ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቋ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኳ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጴ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኒ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኅ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኔ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዮ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሽ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሳ': 2336 train, 292 val, 292 test\n",
+            "Processed '5': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዬ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሩ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሿ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዋ': 2336 train, 292 val, 292 test\n",
+            "Processed '2': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጊ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሒ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቩ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቆ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፁ': 2336 train, 292 val, 292 test\n",
+            "Processed 'QUOTE': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጼ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቭ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሄ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኾ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዛ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጿ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዉ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኀ': 2336 train, 292 val, 292 test\n",
+            "Processed '፫': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሎ': 2336 train, 292 val, 292 test\n",
+            "Processed '፦': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቿ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጸ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጅ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሬ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ት': 2336 train, 292 val, 292 test\n",
+            "Processed 'ተ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጵ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጢ': 2336 train, 292 val, 292 test\n",
+            "Processed ')': 2336 train, 292 val, 292 test\n",
+            "Processed '!': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሉ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጬ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዑ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኄ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፅ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሠ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ነ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፔ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፏ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኑ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ን': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዞ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጎ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጭ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሁ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጓ': 2336 train, 292 val, 292 test\n",
+            "Processed '=': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዠ': 2336 train, 292 val, 292 test\n",
+            "Processed 'DOT': 2336 train, 292 val, 292 test\n",
+            "Processed 'FORWARD_SLASH': 2336 train, 292 val, 292 test\n",
+            "Processed '(': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቂ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጲ': 2336 train, 292 val, 292 test\n",
+            "Processed '፩': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጾ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቅ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዜ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዓ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቮ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጋ': 2336 train, 292 val, 292 test\n",
+            "Processed '8': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሗ': 2336 train, 292 val, 292 test\n",
+            "Processed '፪': 2336 train, 292 val, 292 test\n",
+            "Processed 'ር': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፍ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሔ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሢ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጦ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዔ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሙ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሻ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጤ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቤ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሼ': 2336 train, 292 val, 292 test\n",
+            "Processed '፣': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጁ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቹ': 2336 train, 292 val, 292 test\n",
+            "Processed '፮': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቱ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጀ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፀ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቦ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሕ': 2336 train, 292 val, 292 test\n",
+            "Processed '6': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኞ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሟ': 2336 train, 292 val, 292 test\n",
+            "Processed 'QUESTION': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጽ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሮ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኗ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዌ': 2336 train, 292 val, 292 test\n",
+            "Processed 'የ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጂ': 2336 train, 292 val, 292 test\n",
+            "Processed '፡': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሆ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ለ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ላ': 2336 train, 292 val, 292 test\n",
+            "Processed '1': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቸ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'መ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሱ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ል': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሂ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሯ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዶ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ው': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጌ': 2336 train, 292 val, 292 test\n",
+            "Processed '፰': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጨ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ራ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኺ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሐ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዪ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኦ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሷ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዚ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኣ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዧ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሲ': 2336 train, 292 val, 292 test\n",
+            "Processed ''': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጡ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዕ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጺ': 2336 train, 292 val, 292 test\n",
+            "Processed 'LT': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኝ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፈ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጧ': 2336 train, 292 val, 292 test\n",
+            "Processed '-': 2336 train, 292 val, 292 test\n",
+            "Processed 'ግ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሸ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፄ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዟ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዘ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፌ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቢ': 2336 train, 292 val, 292 test\n",
+            "Processed '፶': 2336 train, 292 val, 292 test\n",
+            "Processed '9': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኖ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኁ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሧ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኋ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፂ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሃ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኂ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጠ': 2336 train, 292 val, 292 test\n",
+            "Processed '—': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዩ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ያ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሤ': 2336 train, 292 val, 292 test\n",
+            "Processed '7': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዙ': 2336 train, 292 val, 292 test\n",
+            "Processed 'እ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ታ': 2336 train, 292 val, 292 test\n",
+            "Processed '፵': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሚ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቧ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፓ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ማ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቻ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኽ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ኮ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሥ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዒ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ወ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጩ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ይ': 2336 train, 292 val, 292 test\n",
+            "Processed '፬': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዦ': 2336 train, 292 val, 292 test\n",
+            "Processed 'አ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ጄ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቪ': 2336 train, 292 val, 292 test\n",
+            "Processed '፭': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዡ': 2336 train, 292 val, 292 test\n",
+            "Processed 'STAR': 2336 train, 292 val, 292 test\n",
+            "Processed '፷': 2336 train, 292 val, 292 test\n",
+            "Processed 'ገ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ዣ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ሏ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቄ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ፊ': 2336 train, 292 val, 292 test\n",
+            "Processed 'ቾ': 2336 train, 292 val, 292 test\n",
+            "Dataset split completed successfully.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 2: Load and preprocess the dataset\n",
+        "data_transforms = transforms.Compose([\n",
+        "    transforms.Grayscale(num_output_channels=1),\n",
+        "    transforms.Resize((32, 32)),\n",
+        "    transforms.ToTensor(),\n",
+        "    transforms.Normalize((0.5,), (0.5,))\n",
+        "])\n",
+        "\n",
+        "dataset_path = '/content/amharic_dataset_split'\n",
+        "\n",
+        "train_dataset = datasets.ImageFolder(root=dataset_path + '/train', transform=data_transforms)\n",
+        "val_dataset = datasets.ImageFolder(root=dataset_path + '/val', transform=data_transforms)\n",
+        "test_dataset = datasets.ImageFolder(root=dataset_path + '/test', transform=data_transforms)\n",
+        "\n",
+        "batch_size = 32\n",
+        "\n",
+        "train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)\n",
+        "val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)\n",
+        "test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)\n",
+        "\n",
+        "num_classes = len(train_dataset.classes)\n",
+        "print(f\"Number of classes: {num_classes}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "9wFPUONiIuqF",
+        "outputId": "9e93f75d-ea99-46a9-ef22-311f5b0ef858"
+      },
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Number of classes: 317\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 3: Define the custom CNN model\n",
+        "class CustomCNN(nn.Module):\n",
+        "    def __init__(self, num_classes):\n",
+        "        super(CustomCNN, self).__init__()\n",
+        "        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n",
+        "        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n",
+        "        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)\n",
+        "        self.pool = nn.MaxPool2d(2, 2)\n",
+        "        self.fc1 = nn.Linear(128 * 4 * 4, 128)\n",
+        "        self.fc2 = nn.Linear(128, num_classes)\n",
+        "\n",
+        "    def forward(self, x):\n",
+        "        x = self.pool(torch.relu(self.conv1(x)))\n",
+        "        x = self.pool(torch.relu(self.conv2(x)))\n",
+        "        x = self.pool(torch.relu(self.conv3(x)))\n",
+        "        x = x.view(-1, 128 * 4 * 4)\n",
+        "        x = torch.relu(self.fc1(x))\n",
+        "        x = self.fc2(x)\n",
+        "        return x\n",
+        "\n",
+        "device = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\n",
+        "model = CustomCNN(num_classes=num_classes).to(device)"
+      ],
+      "metadata": {
+        "id": "sHaZ0JkXKfFK"
+      },
+      "execution_count": 22,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 4: Define loss function and optimizer\n",
+        "criterion = nn.CrossEntropyLoss()\n",
+        "optimizer = optim.Adam(model.parameters(), lr=0.001)"
+      ],
+      "metadata": {
+        "id": "dfFo1a8xLoYN"
+      },
+      "execution_count": 23,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from tqdm import tqdm\n",
+        "import torch\n",
+        "\n",
+        "# Reverse the restricted_char_map dictionary\n",
+        "restricted_char_map = {\n",
+        "    '\"': 'QUOTE',\n",
+        "    '<': 'LT',\n",
+        "    '>': 'GT',\n",
+        "    '?': 'QUESTION',\n",
+        "    '*': 'STAR',\n",
+        "    '/': 'FORWARD_SLASH',\n",
+        "    '.': 'DOT'\n",
+        "}\n",
+        "reverse_char_map = {v: k for k, v in restricted_char_map.items()}\n",
+        "\n",
+        "# Function to revert label names back to original characters\n",
+        "def revert_label(label_str):\n",
+        "    for key, value in reverse_char_map.items():\n",
+        "        label_str = label_str.replace(key, value)\n",
+        "    return label_str\n",
+        "\n",
+        "# Step 5: Train the model and track accuracy, precision, and recall\n",
+        "def train_model(model, train_loader, val_loader, criterion, optimizer, epochs=10):\n",
+        "    for epoch in range(epochs):\n",
+        "        model.train()\n",
+        "        running_loss = 0.0\n",
+        "        all_preds, all_labels = [], []\n",
+        "\n",
+        "        # Wrap train_loader with tqdm for progress display\n",
+        "        progress_bar = tqdm(train_loader, desc=f\"Epoch {epoch+1}/{epochs}\", leave=True)\n",
+        "\n",
+        "        for images, labels in progress_bar:\n",
+        "            images, labels = images.to(device), labels.to(device)\n",
+        "\n",
+        "            optimizer.zero_grad()\n",
+        "            outputs = model(images)\n",
+        "            loss = criterion(outputs, labels)\n",
+        "            loss.backward()\n",
+        "            optimizer.step()\n",
+        "\n",
+        "            running_loss += loss.item()\n",
+        "            preds = torch.argmax(outputs, dim=1)\n",
+        "            all_preds.extend(preds.cpu().numpy())\n",
+        "            all_labels.extend(labels.cpu().numpy())\n",
+        "\n",
+        "            # Update tqdm progress bar with current loss\n",
+        "            progress_bar.set_postfix(loss=loss.item())\n",
+        "\n",
+        "        # Convert numerical labels to original characters\n",
+        "        all_labels = [revert_label(train_loader.dataset.classes[label]) for label in all_labels]\n",
+        "        all_preds = [revert_label(train_loader.dataset.classes[pred]) for pred in all_preds]\n",
+        "\n",
+        "        train_acc = accuracy_score(all_labels, all_preds)\n",
+        "        train_precision = precision_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "        train_recall = recall_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "\n",
+        "        print(f\"Epoch {epoch+1}/{epochs} - Loss: {running_loss/len(train_loader):.4f}, \"\n",
+        "              f\"Accuracy: {train_acc:.4f}, Precision: {train_precision:.4f}, Recall: {train_recall:.4f}\")\n",
+        "\n",
+        "        validate_model(model, val_loader)\n",
+        "\n",
+        "def validate_model(model, val_loader):\n",
+        "    model.eval()\n",
+        "    all_preds, all_labels = [], []\n",
+        "\n",
+        "    # Wrap val_loader with tqdm for progress display\n",
+        "    progress_bar = tqdm(val_loader, desc=\"Validation\", leave=True)\n",
+        "\n",
+        "    with torch.no_grad():\n",
+        "        for images, labels in progress_bar:\n",
+        "            images, labels = images.to(device), labels.to(device)\n",
+        "            outputs = model(images)\n",
+        "            preds = torch.argmax(outputs, dim=1)\n",
+        "            all_preds.extend(preds.cpu().numpy())\n",
+        "            all_labels.extend(labels.cpu().numpy())\n",
+        "\n",
+        "    # Convert numerical labels to original characters\n",
+        "    all_labels = [revert_label(val_loader.dataset.classes[label]) for label in all_labels]\n",
+        "    all_preds = [revert_label(val_loader.dataset.classes[pred]) for pred in all_preds]\n",
+        "\n",
+        "    val_acc = accuracy_score(all_labels, all_preds)\n",
+        "    val_precision = precision_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "    val_recall = recall_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "\n",
+        "    print(f\"Validation - Accuracy: {val_acc:.4f}, Precision: {val_precision:.4f}, Recall: {val_recall:.4f}\")\n",
+        "\n",
+        "# Run the training process with progress display\n",
+        "train_model(model, train_loader, val_loader, criterion, optimizer, epochs=10)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "51mnMesNL40T",
+        "outputId": "a1100188-d766-44b7-f25f-16d33a6c736c"
+      },
+      "execution_count": 24,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 1/10: 100%|██████████| 23141/23141 [15:27<00:00, 24.96it/s, loss=0.0186]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/10 - Loss: 0.5733, Accuracy: 0.8490, Precision: 0.8526, Recall: 0.8490\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [01:26<00:00, 33.44it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9224, Precision: 0.9594, Recall: 0.9224\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 2/10: 100%|██████████| 23141/23141 [12:10<00:00, 31.67it/s, loss=0.114]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 2/10 - Loss: 0.2315, Accuracy: 0.9318, Precision: 0.9343, Recall: 0.9318\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [01:23<00:00, 34.59it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9280, Precision: 0.9627, Recall: 0.9280\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 3/10: 100%|██████████| 23141/23141 [10:22<00:00, 37.17it/s, loss=0.116]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 3/10 - Loss: 0.2065, Accuracy: 0.9399, Precision: 0.9434, Recall: 0.9399\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:49<00:00, 57.89it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9448, Precision: 0.9798, Recall: 0.9448\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 4/10: 100%|██████████| 23141/23141 [09:11<00:00, 41.98it/s, loss=0.433]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 4/10 - Loss: 0.1958, Accuracy: 0.9432, Precision: 0.9463, Recall: 0.9432\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:47<00:00, 60.33it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9466, Precision: 0.9820, Recall: 0.9466\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 5/10: 100%|██████████| 23141/23141 [08:47<00:00, 43.86it/s, loss=0.112]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 5/10 - Loss: 0.1922, Accuracy: 0.9445, Precision: 0.9479, Recall: 0.9445\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:44<00:00, 64.63it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9424, Precision: 0.9777, Recall: 0.9424\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 6/10: 100%|██████████| 23141/23141 [08:44<00:00, 44.12it/s, loss=0.387]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 6/10 - Loss: 0.1887, Accuracy: 0.9460, Precision: 0.9502, Recall: 0.9460\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:45<00:00, 63.11it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9451, Precision: 0.9832, Recall: 0.9451\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 7/10: 100%|██████████| 23141/23141 [08:47<00:00, 43.90it/s, loss=0.112]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 7/10 - Loss: 0.1883, Accuracy: 0.9465, Precision: 0.9497, Recall: 0.9465\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:46<00:00, 62.56it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9470, Precision: 0.9822, Recall: 0.9470\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 8/10: 100%|██████████| 23141/23141 [08:48<00:00, 43.76it/s, loss=0.0993]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 8/10 - Loss: 0.1871, Accuracy: 0.9473, Precision: 0.9507, Recall: 0.9473\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:45<00:00, 63.73it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9498, Precision: 0.9845, Recall: 0.9498\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 9/10: 100%|██████████| 23141/23141 [08:50<00:00, 43.65it/s, loss=0.206]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 9/10 - Loss: 0.1898, Accuracy: 0.9472, Precision: 0.9507, Recall: 0.9472\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:46<00:00, 62.23it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9499, Precision: 0.9853, Recall: 0.9499\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Epoch 10/10: 100%|██████████| 23141/23141 [08:51<00:00, 43.57it/s, loss=0.224]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 10/10 - Loss: 0.1897, Accuracy: 0.9476, Precision: 0.9515, Recall: 0.9476\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Validation: 100%|██████████| 2893/2893 [00:45<00:00, 64.06it/s]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Validation - Accuracy: 0.9507, Precision: 0.9864, Recall: 0.9507\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import torch\n",
+        "import logging\n",
+        "from sklearn.metrics import accuracy_score, precision_score, recall_score\n",
+        "\n",
+        "# Set up logging\n",
+        "logging.basicConfig(level=logging.INFO)\n",
+        "logger = logging.getLogger()\n",
+        "\n",
+        "# Step 6: Evaluate the model on the test set and log predictions with true values\n",
+        "def evaluate_model(model, test_loader, device='cuda', log_file='model_predictions.log'):\n",
+        "    model.eval()\n",
+        "    all_preds, all_labels = [], []\n",
+        "\n",
+        "    # Open the log file to write the predictions\n",
+        "    with open(log_file, 'w') as f:\n",
+        "        f.write(\"Image Filename, True Label, Predicted Label\\n\")  # Header for the CSV-like log\n",
+        "\n",
+        "        with torch.no_grad():\n",
+        "            for images, labels in test_loader:\n",
+        "                images, labels = images.to(device), labels.to(device)\n",
+        "                outputs = model(images)\n",
+        "                preds = torch.argmax(outputs, dim=1)\n",
+        "\n",
+        "                # Log the predictions side by side with the true labels\n",
+        "                for i in range(len(labels)):\n",
+        "                    # Assuming images are in a batch, and you can extract the filename or index if needed\n",
+        "                    true_label = labels[i].item()\n",
+        "                    predicted_label = preds[i].item()\n",
+        "                    # Here, 'image_filenames' should be a list of filenames if available in your dataset\n",
+        "                    # If not, you can just log the index or some other information.\n",
+        "                    f.write(f\"{i}, {true_label}, {predicted_label}\\n\")  # Log the index and labels\n",
+        "\n",
+        "                all_preds.extend(preds.cpu().numpy())\n",
+        "                all_labels.extend(labels.cpu().numpy())\n",
+        "\n",
+        "    # Calculate accuracy, precision, and recall\n",
+        "    test_acc = accuracy_score(all_labels, all_preds)\n",
+        "    test_precision = precision_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "    test_recall = recall_score(all_labels, all_preds, average='weighted', zero_division=0)\n",
+        "\n",
+        "    logger.info(f\"Test Accuracy: {test_acc:.4f}\")\n",
+        "    logger.info(f\"Test Precision: {test_precision:.4f}\")\n",
+        "    logger.info(f\"Test Recall: {test_recall:.4f}\")\n",
+        "\n",
+        "# Example usage\n",
+        "evaluate_model(model, test_loader, device='cuda', log_file='model_predictions.log')\n"
+      ],
+      "metadata": {
+        "id": "BhY1BwWOlYla"
+      },
+      "execution_count": 28,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 7: Save and load the model\n",
+        "torch.save(model.state_dict(), '/content/drive/MyDrive/amharic_cnn_model.pth')\n",
+        "print(\"Model saved successfully.\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "kAnptn0WlgpV",
+        "outputId": "acce28a5-f477-4a7f-fd89-80909bfba632"
+      },
+      "execution_count": 26,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Model saved successfully.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Step 8: Load the saved model\n",
+        "model.load_state_dict(torch.load('/content/drive/MyDrive/amharic_cnn_model.pth'))\n",
+        "model.eval()\n",
+        "print(\"Model loaded successfully.\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "f8OrtI7OmAuj",
+        "outputId": "8a9badc1-260d-4fea-c0ae-8ba1e9788432"
+      },
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "<ipython-input-27-cf62a5429dcd>:2: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.\n",
+            "  model.load_state_dict(torch.load('/content/drive/MyDrive/amharic_cnn_model.pth'))\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Model loaded successfully.\n"
+          ]
+        }
+      ]
+    }
+  ]
+}

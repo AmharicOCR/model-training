@@ -4,12 +4,146 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac08072d-ca3e-4a9d-862c-82b0a536173d" name="Changes" comment="made the read me">
-      <change afterPath="$PROJECT_DIR$/amharic_character_model.pth" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notes.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+    <list default="true" id="ac08072d-ca3e-4a9d-862c-82b0a536173d" name="Changes" comment="second training with custom CNN model">
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/0/0_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/2/2_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/3/3_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/4/4_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሀ/ሀ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሁ/ሁ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሂ/ሂ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሆ/ሆ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ለ/ለ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሉ/ሉ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሊ/ሊ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሌ/ሌ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ል/ል_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሎ/ሎ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሐ/ሐ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሑ/ሑ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሕ/ሕ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሠ/ሠ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሤ/ሤ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሥ/ሥ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ረ/ረ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሩ/ሩ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ራ/ራ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሬ/ሬ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ር/ር_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሯ/ሯ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሳ/ሳ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሴ/ሴ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ስ/ስ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሷ/ሷ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሸ/ሸ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሻ/ሻ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሼ/ሼ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ሿ/ሿ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቀ/ቀ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቋ/ቋ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/በ/በ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቡ/ቡ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቢ/ቢ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ባ/ባ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቦ/ቦ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቧ/ቧ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቪ/ቪ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቮ/ቮ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቲ/ቲ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቶ/ቶ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቺ/ቺ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ች/ች_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ቾ/ቾ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኁ/ኁ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኂ/ኂ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኃ/ኃ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኄ/ኄ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኅ/ኅ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ነ/ነ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኑ/ኑ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኒ/ኒ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ን/ን_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኙ/ኙ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/እ/እ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ከ/ከ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኩ/ኩ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኬ/ኬ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ክ/ክ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኸ/ኸ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኹ/ኹ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኻ/ኻ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኼ/ኼ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ኽ/ኽ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዓ/ዓ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዔ/ዔ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዘ/ዘ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዚ/ዚ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዛ/ዛ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዜ/ዜ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዞ/ዞ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዟ/ዟ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዢ/ዢ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዣ/ዣ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዤ/ዤ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዦ/ዦ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዧ/ዧ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዪ/ዪ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ያ/ያ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ዮ/ዮ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጁ/ጁ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጂ/ጂ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጃ/ጃ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጅ/ጅ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጆ/ጆ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጇ/ጇ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ግ/ግ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጡ/ጡ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጥ/ጥ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጩ/ጩ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጬ/ጬ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጭ/ጭ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጰ/ጰ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጱ/ጱ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጲ/ጲ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጳ/ጳ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጴ/ጴ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጶ/ጶ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጻ/ጻ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጼ/ጼ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጽ/ጽ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ጿ/ጿ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፀ/ፀ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፁ/ፁ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፄ/ፄ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፈ/ፈ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፔ/ፔ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/ፗ/ፗ_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፦/፦_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፨/፨_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፪/፪_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፫/፫_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፬/፬_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፮/፮_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፯/፯_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/amharic_dataset/፳/፳_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image_dir/ህ.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image_dir/መ.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image_dir/የ.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image_dir/ዳ.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/amharic_model_lessOverfitting.pth" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/best_model.pth" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/ancient_testing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/maxTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/newtester.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/test01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/trainpre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trainners/class-maker.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trainners/count.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/amharic_character_model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/models/amharic_character_model.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainners/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,22 +167,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Python.train.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python.ancient_testing.executor": "Run",
+    "Python.class-maker.executor": "Run",
+    "Python.count.executor": "Run",
+    "Python.maxTest.executor": "Run",
+    "Python.newtester.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.test01.executor": "Run",
+    "Python.train.executor": "Run",
+    "Python.trainpre.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Documents\project\amharic ocr\models" />
+      <recent name="C:\Users\user\Documents\project\amharic ocr\trainners" />
+      <recent name="C:\Users\user\Documents\project\amharic ocr\testers" />
       <recent name="C:\Users\user\Documents\project\amharic ocr" />
     </key>
   </component>
@@ -68,7 +213,11 @@
       <option name="presentableId" value="Default" />
       <updated>1737102001382</updated>
       <workItem from="1737102011213" duration="8935000" />
-      <workItem from="1737121211965" duration="3348000" />
+      <workItem from="1737121211965" duration="7692000" />
+      <workItem from="1737534015847" duration="1015000" />
+      <workItem from="1737693757657" duration="5816000" />
+      <workItem from="1738570269741" duration="1642000" />
+      <workItem from="1738752219875" duration="19699000" />
     </task>
     <task id="LOCAL-00001" summary="first version of the trained model with single epoch">
       <option name="closed" value="true" />
@@ -94,7 +243,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737104939089</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="second training with custom CNN model">
+      <option name="closed" value="true" />
+      <created>1737142187274</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1737142187274</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -105,9 +262,18 @@
     <MESSAGE value="first version of the trained model with single epoch" />
     <MESSAGE value="merged" />
     <MESSAGE value="made the read me" />
-    <option name="LAST_COMMIT_MESSAGE" value="made the read me" />
+    <MESSAGE value="second training with custom CNN model" />
+    <option name="LAST_COMMIT_MESSAGE" value="second training with custom CNN model" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/amharic_ocr$ancient_testing.coverage" NAME="ancient_testing Coverage Results" MODIFIED="1738811921215" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/testers" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$trainpre.coverage" NAME="trainpre Coverage Results" MODIFIED="1738809118318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$newtester.coverage" NAME="newtester Coverage Results" MODIFIED="1738814114848" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/testers" />
     <SUITE FILE_PATH="coverage/amharic_ocr$train.coverage" NAME="train Coverage Results" MODIFIED="1737138551447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$class_maker.coverage" NAME="class-maker Coverage Results" MODIFIED="1738754789531" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$test.coverage" NAME="test Coverage Results" MODIFIED="1738803277908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$maxTest.coverage" NAME="maxTest Coverage Results" MODIFIED="1738811890972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/testers" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$test01.coverage" NAME="test01 Coverage Results" MODIFIED="1738812038753" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/testers" />
+    <SUITE FILE_PATH="coverage/amharic_ocr$count.coverage" NAME="count Coverage Results" MODIFIED="1738754850602" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
